@@ -1,8 +1,7 @@
-<!-- Adding some style to table (OPTIONAL) -->
+{% from 'components.html' import card with context %}
 <link rel="stylesheet" href="./static/styles.css"/>
 
 {% if not session['user'] %}
-
   <div class='login-title'>Enter your name 👇</div>
   <form action='/' method='POST'>
     <div class='login-form'>
@@ -13,38 +12,22 @@
 {% endif %}
 
 {% if session['user'] %}
-
   <div class='wrapper'>
-  
     <div class='header'>
       <div>
-      <div class='card'>
-        <div>🐶</div>
-        <div>{{ dogs_generated }}</div>
-        <span>Total Dogs</span>
+        {{ card(emoji='🐶', data=dogs_generated, title='Total Dogs')}}
+        {{ card(emoji='💁', data=session['user'], title='Username')}}
+        {{ card(emoji='🔑', data=user['logins'], title='# of Logins')}}
+        {{ card(emoji='🐕', data=user['dogs_generated'], title='Dogs You Generated')}}
       </div>
-      <div class='card'>
-        <div>💁</div>
-        <div>{{ session['user'] }}</div>
-      </div>
-      <div class='card'>
-        <div>🔑</div>
-        <div>{{ user['logins'] or 0 }}</div>
-        <span># of Logins</span>
-      </div>
-      <div class='card'>
-        <div>🐕</div>
-        <div>{{ user['dogs_generated'] }}</div>
-        <span>Dogs You Generated</span>
-      </div>
-      </div>
-      {% if dog_image %}
-        <div id='dog'><img src='{{dog_image}}' width='200' height='200' style="border-radius: 10%;"></div>
-      {% endif %}
+        <div id='dog'>
+          <img src="{{ dog_image }}" width='200' height='200'
+            style="border-radius: 10%;">
+        </div>
     </div>
     
     <div class='buttonsContainer'>
-      <form action="/get_dog">
+      <form action="/get_dog" method='GET'>
         <button>Get Random Dog</button>
       </form>
 
@@ -53,9 +36,7 @@
     </form>
   </div>
 
-  
     <table class = "leaderboard">
-      <!-- Table headers -->
         <th>
           <div class='titles'>
             <tr>  
@@ -66,21 +47,19 @@
             </tr>  
             </div>
         </th>
-    
-        {% for index, user in leaderboard %}
+      {% for index, user in users %}
           <tr>
-            {% if index + 1 == 1 %}
-              <td>1 {{ '🏆' }}</td>
-            {% else %}
-              <td>{{ index + 1 }}</td>
-            {% endif %}
+            <!-- Insert the index. Add a trophy if the index is 1 -->
+            <td> {{ index | trophy_or_position }} </td>
+            <!-- Insert Username -->
             <td>{{ user['user_name'] }}</td>
+            <!-- Insert Number of Dogs Generated -->
             <td>{{ user['dogs_generated'] }}</td>
-            <td>{{ user['logins'] }}</td>
+            <!-- Insert Number of Logins -->
+            <td>{{ user['logins'] }} </td>
           </tr>
-        {% endfor %}
+     {% endfor %}
     
     </table>
   </div>
 {% endif %}
-
